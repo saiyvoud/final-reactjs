@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-//import { useNavigate } from "react-router-dom";
-
-
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import { register } from "../../api/auth.api";
 
 const Register = (props) => {
   const [email, setEmail] = useState("");
@@ -9,8 +9,29 @@ const Register = (props) => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
 
+  const sumitRegister = async () => {
+    try {
+      let response = await register(email,password)
+      if (response.data.success === true) {
+        Swal.fire({
+          title: "Success",
+          text: "Register Success",
+          icon: "success",
+        }).then(() => {
+          navigate("/login");
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        title: "Faild",
+        text: "Email is already ",
+        icon: "error",
+      });
+    }
+  };
   const onButtonClick = () => {
     // You'll update this function later...
     // Set initial error values to empty
@@ -33,11 +54,11 @@ const Register = (props) => {
       return;
     }
 
-    if (password.length < 7) {
+    if (password.length < 5) {
       setPasswordError("The password must be 8 characters or longer");
       return;
     }
-    alert("Register Success")
+    sumitRegister();
   };
   return (
     <div className={"mainContainer"}>
